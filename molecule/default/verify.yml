@@ -1,0 +1,37 @@
+---
+- name: Verify
+  hosts: localhost
+  vars_files:
+    - ../../vars/main.yml
+  vars:
+    ansible_rust_user_home: "{{ ansible_env.HOME }}"
+  tasks:
+    - name: Check if the cargo directory exists
+      stat:
+        path: "{{ ansible_rust_user_home }}/.cargo"
+      register: cargo_directory_facts
+
+    - name: Fail if cargo directory does not exist
+      fail:
+        msg: "directory {{ ansible_rust_user_home }}/.cargo does not exist."
+      when: not cargo_directory_facts.stat.exists
+
+    - name: Check if the cargo binary exists
+      stat:
+        path: "{{ ansible_rust_user_home }}/.cargo/bin/cargo"
+      register: cargo_binary_facts
+
+    - name: Fail if cargo binary does not exist
+      fail:
+        msg: "rustc binary does not exist."
+      when: not cargo_binary_facts.stat.exists
+
+    - name: Check if the rustc binary exists
+      stat:
+        path: "{{ ansible_rust_user_home }}/.cargo/bin/rustc"
+      register: rustc_binary_facts
+
+    - name: Fail if rustc binary does not exist
+      fail:
+        msg: "rustc binary does not exist."
+      when: not rustc_binary_facts.stat.exists
